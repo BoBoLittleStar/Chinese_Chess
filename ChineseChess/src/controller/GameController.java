@@ -1,19 +1,29 @@
 package controller;
 
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import data.Data;
 import model.Board;
+import model.Checker;
 import view.MainFrame;
 
 public class GameController implements ActionListener {
-	private final Board board;
+	private Board board;
 	private MainFrame mainFrame;
 
 	public GameController(Board board, MainFrame mainFrame) {
 		this.board = board;
 		this.mainFrame = mainFrame;
+	}
+
+	public boolean move(Point src, Point dest) {
+		boolean moved = this.board.move(src, dest);
+		Checker checker = this.board.lastTaken();
+		if (moved && checker != null)
+			this.mainFrame.put(checker.player, checker);
+		return moved;
 	}
 
 	@Override
@@ -26,7 +36,7 @@ public class GameController implements ActionListener {
 			break;
 		case Data.SET:
 			this.board.toggleMode();
-			this.mainFrame.revalidate();
+			this.mainFrame.repaint();
 			break;
 		case Data.FINISH:
 			break;

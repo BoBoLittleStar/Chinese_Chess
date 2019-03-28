@@ -109,6 +109,8 @@ public class Board implements Cloneable {
 	}
 
 	public Set<Point> getAvailableMoves(Point point) {
+		if (this.winner != null)
+			return null;
 		Checker checker = this.board.get(point);
 		if (checker == null)
 			return null;

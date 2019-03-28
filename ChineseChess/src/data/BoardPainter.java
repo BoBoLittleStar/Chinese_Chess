@@ -5,17 +5,17 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
+
+import model.Checker;
+import model.Checker.Player;
 
 public class BoardPainter {
-	public static BufferedImage board() {
+	public static void board(Graphics g) {
 		int unit = Data.getUnit();
-		BufferedImage bi = new BufferedImage(unit * 9, unit * 10, BufferedImage.TYPE_INT_RGB);
-		Graphics2D g = bi.createGraphics();
 		g.setColor(Color.white);
 		g.fillRect(0, 0, unit * 9, unit * 10);
 		g.setColor(Color.black);
-		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		for (int x = 0; x < 9; x++)
 			g.drawLine(x * unit + unit / 2, 0, x * unit + unit / 2, unit * 19);
 		for (int y = 0; y < 10; y++)
@@ -62,7 +62,28 @@ public class BoardPainter {
 		BoardPainter.draw(g, Data.HE, unit * 2, unit * 9 / 2, unit, unit);
 		BoardPainter.draw(g, Data.HAN, unit * 6, unit * 9 / 2, unit, unit);
 		BoardPainter.draw(g, Data.JIE, unit * 7, unit * 9 / 2, unit, unit);
-		return bi;
+	}
+
+	public static void checker(Graphics g, Checker checker, int x, int y) {
+		int unit = Data.getUnit();
+		int border = Data.getBorder();
+		int size = unit - 2 * border;
+		x = x * unit + border;
+		y = y * unit + border;
+		g.setColor(Color.white);
+		g.fillOval(x, y, size, size);
+		g.setColor(checker.player == Player.RED ? Data.RED : Data.BLACK);
+		g.fillOval(x + 2, y + 2, size - 4, size - 4);
+		g.setColor(Color.black);
+		g.drawOval(x, y, size, size);
+		g.drawOval(x + 3, y + 3, size - 6, size - 6);
+		FontMetrics m = g.getFontMetrics(Data.getFont());
+		String s = checker.toString();
+		x = x + (size - m.stringWidth(s)) / 2;
+		y = y + (size - m.getHeight()) / 2 + m.getAscent();
+		g.setColor(Color.white);
+		g.setFont(Data.getFont());
+		g.drawString(s, x, y);
 	}
 
 	private static void draw(Graphics g, String s, int x, int y, int width, int height) {
